@@ -1,0 +1,28 @@
+{
+    "name": "leogr/zf2-auth-module",
+    "description": "ZF2 module for Authentication service",
+    "license": "BSD-2-Clause",
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Leonardo Grasso",
+            "email": "me@leonardograsso.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4",
+        "facebook/php-sdk": "dev-master"
+    },
+    "require-dev": {
+       "phpunit/phpunit": "4.0.*"
+    },
+    "autoload": {
+        "psr-0": {
+            "AuthModule": "src/",
+            "AuthModuleTest": "tests/"
+        },
+        "classmap": [
+        "./Module.php"
+       ]
+    }
+}
