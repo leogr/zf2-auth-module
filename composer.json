@@ -21,7 +21,7 @@
             "AuthModuleTest": "tests/"
         },
         "classmap": [
-        "./Module.php"
+            "./Module.php"
        ]
     }
 }
