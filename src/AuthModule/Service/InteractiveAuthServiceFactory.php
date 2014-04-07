@@ -44,7 +44,7 @@ class InteractiveAuthServiceFactory implements FactoryInterface
         if (isset($config['session_storage']) && is_array($config['session_storage'])) {
            $sessionStorageConfig = array_merge($sessionStorageConfig, $config['session_storage']);
         }
-        $sessionManager = $serviceLocator->get('SessionManager');
+        $sessionManager = $serviceLocator->get('Zend\Session\SessionManager');
 
         $authService->setStorage(new Session(
             $sessionStorageConfig['namespace'], $sessionStorageConfig['member'], $sessionManager

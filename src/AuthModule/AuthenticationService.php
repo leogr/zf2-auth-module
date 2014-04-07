@@ -44,7 +44,7 @@ class AuthenticationService extends BaseAuthService implements EventManagerAware
         $events->attach(AuthenticationEvent::EVENT_AUTH, array($this, 'dispatchAuthentication'));
     }
 
-    protected function dispatchAuthentication(AuthenticationEvent $e)
+    public function dispatchAuthentication(AuthenticationEvent $e)
     {
         $e->setResult(parent::authenticate($e->getAdapter()));
     }
@@ -57,7 +57,20 @@ class AuthenticationService extends BaseAuthService implements EventManagerAware
      */
     public function setEventManager(EventManagerInterface $events)
     {
-        parent::setEventManager($eventManager);
+        $identifiers = array(__CLASS__, get_class($this));
+        if (isset($this->eventIdentifier)) {
+            if ((is_string($this->eventIdentifier))
+                || (is_array($this->eventIdentifier))
+                || ($this->eventIdentifier instanceof Traversable)
+            ) {
+                $identifiers = array_unique(array_merge($identifiers, (array) $this->eventIdentifier));
+            } elseif (is_object($this->eventIdentifier)) {
+                $identifiers[] = $this->eventIdentifier;
+            }
+            // silently ignore invalid eventIdentifier types
+        }
+        $events->setIdentifiers($identifiers);
+        $this->events = $events;
         $this->attachDefaultListener();
         return $this;
     }

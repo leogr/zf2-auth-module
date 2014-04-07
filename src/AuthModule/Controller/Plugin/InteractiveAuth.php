@@ -11,7 +11,7 @@ use Zend\Authentication\Result;
 use Zend\Authentication\Adapter\AdapterInterface;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
-class InteractiveAuth extends AbstractPlugin implements ServiceLocatorAwareInterface
+class InteractiveAuth extends AbstractPlugin
 {
 
     /**
@@ -37,10 +37,7 @@ class InteractiveAuth extends AbstractPlugin implements ServiceLocatorAwareInter
     public function __construct(AuthenticationService $authService, SessionManager $sessionManager)
     {
         if (!$authService->getStorage() instanceof Session) {
-            throw new Zend\Mvc\Exception(__CLASS__ . ' requires SessionStorage');
-        }
-        if (!$authService->getAdapter() instanceof ValidatableAdapterInterface) {
-            throw new Zend\Mvc\Exception(__CLASS__ . ' requires ValidatableAdapterInterface');
+            throw new \RuntimeException(__CLASS__ . ' requires SessionStorage');
         }
 
         $this->authService = $authService;
@@ -75,7 +72,7 @@ class InteractiveAuth extends AbstractPlugin implements ServiceLocatorAwareInter
     /**
      * @param AuthenticationEvent $e
      */
-    protected function authListener(AuthenticationEvent $e)
+    public function authListener(AuthenticationEvent $e)
     {
         $result = $e->getResult();
 
@@ -114,6 +111,10 @@ class InteractiveAuth extends AbstractPlugin implements ServiceLocatorAwareInter
     public function login($identity, $credential)
     {
         $authAdapter = $this->authService->getAdapter();
+
+        if (!$authAdapter instanceof ValidatableAdapterInterface) {
+            throw new \RuntimeException(__CLASS__ . ' requires ValidatableAdapterInterface');
+        }
 
         $authAdapter->setIdentity($identity)
                     ->setCredential($credential);
