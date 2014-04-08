@@ -50,6 +50,10 @@ class InteractiveAuthServiceFactory implements FactoryInterface
             $sessionStorageConfig['namespace'], $sessionStorageConfig['member'], $sessionManager
         ));
 
+        if (isset($config['adapter']) && is_string($config['adapter']) && $serviceLocator->has($config['adapter'])) {
+            $authService->setAdapter($serviceLocator->get($config['adapter']));
+        }
+
         return $authService;
     }
 
