@@ -99,11 +99,11 @@ class AuthenticationService extends BaseAuthService implements EventManagerAware
     /**
      * Authenticates against the supplied adapter
      *
-     * @param  Adapter\AdapterInterface $adapter
+     * @param  AdapterInterface $adapter
      * @return Result
      * @throws Exception\RuntimeException
      */
-    public function authenticate(Adapter\AdapterInterface $adapter = null)
+    public function authenticate(AdapterInterface $adapter = null)
     {
         $event = clone $this->getEvent();
         $event->setName(AuthenticationEvent::EVENT_AUTH);
