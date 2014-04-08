@@ -88,19 +88,19 @@ class ModelAdapter implements AdapterInterface, ValidatableAdapterInterface
     {
         $identity = $this->getIdentity();
         $results = $this->model->findByIdentity($identity);
-        $results = new \ArrayIterator($results);
 
-        $resCount = $results->count($results);
-
-        if ($resCount > 1) {
-            return new Result(Result::FAILURE_IDENTITY_AMBIGUOUS, $identity);
+        $identityObject = null;
+        $count = 0;
+        foreach ($results as $identityObject) {
+            if ($count > 1) {
+                return new Result(Result::FAILURE_IDENTITY_AMBIGUOUS, $identity);
+            }
+            $count++;
         }
 
-        if ($resCount == 0) {
+        if ($count == 0) {
             return new Result(Result::FAILURE_IDENTITY_NOT_FOUND, $identity);
         }
-
-        $identityObject = $results->current();
 
         if ($identityObject instanceof ObjectInterface) {
             if ($identityObject->validateCredential($this->getCredential())) {
