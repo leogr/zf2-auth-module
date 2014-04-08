@@ -6,6 +6,7 @@ use Zend\Authentication\Adapter\AdapterInterface;
 use Zend\Authentication\Adapter\ValidatableAdapterInterface;
 use AuthModule\Indentity\ModelInterface;
 use AuthModule\Indentity\ObjectInterface;
+use Zend\Stdlib\ArrayUtils;
 
 class ModelAdapter implements AdapterInterface, ValidatableAdapterInterface
 {
@@ -87,17 +88,22 @@ class ModelAdapter implements AdapterInterface, ValidatableAdapterInterface
     {
         $identity = $this->getIdentity();
         $results = $this->model->findByIdentity($identity);
+        $results = new \ArrayIterator($results);
 
-        if (count($results) > 1) {
+        $resCount = $results->count($results);
+
+        if ($resCount > 1) {
             return new Result(Result::FAILURE_IDENTITY_AMBIGUOUS, $identity);
         }
 
-        if (count($results) == 0) {
+        if ($resCount == 0) {
             return new Result(Result::FAILURE_IDENTITY_NOT_FOUND, $identity);
         }
 
-        if ($results[0] instanceof ObjectInterface) {
-            if ($results[0]->validateCredential($this->getCredential())) {
+        $identityObject = $results->current();
+
+        if ($identityObject instanceof ObjectInterface) {
+            if ($identityObject->validateCredential($this->getCredential())) {
                 return new Result(Result::SUCCESS, $identity);
             }//else
             return new Result(Result::FAILURE, $identity);
