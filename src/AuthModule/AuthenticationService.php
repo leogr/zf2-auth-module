@@ -1,6 +1,7 @@
 <?php
 namespace AuthModule;
 
+use AuthModule\Indentity\IdentityObjectInterface;
 use Zend\Authentication\AuthenticationService as BaseAuthService;
 use Zend\Authentication\Adapter\AdapterInterface;
 use Zend\Authentication\Result;
@@ -9,7 +10,7 @@ use Zend\EventManager\EventManagerAwareTrait;
 use AuthModule\Indentity\ObjectInterface;
 use Zend\EventManager\EventManagerInterface;
 
-class AuthenticationService extends BaseAuthService implements EventManagerAwareInterface
+class AuthenticationService extends BaseAuthService implements EventManagerAwareInterface, IdentityObjectInterface
 {
 
     use EventManagerAwareTrait;
@@ -76,24 +77,16 @@ class AuthenticationService extends BaseAuthService implements EventManagerAware
     }
 
     /**
-     * @param ObjectInterface $identityObject
-     * @return $this
-     */
-    public function setIdentityObject(ObjectInterface $identityObject)
-    {
-        $this->identityObject = $identityObject;
-        return $this;
-    }
-
-    /**
      * @return ObjectInterface|null
      */
     public function getIdentityObject()
     {
         if ($this->hasIdentity()) {
+            if(!$this->identityObject) {
+                $this->identityObject = $this->getAdapter()->getIdentityObjectByIdentity($this->getIdentity());
+            }
             return $this->identityObject;
         }
-        return null;
     }
 
     /**

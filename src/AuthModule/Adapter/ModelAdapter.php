@@ -21,6 +21,7 @@ class ModelAdapter implements AdapterInterface, ValidatableAdapterInterface
      */
     protected $credential;
 
+
     /**
      * @var ModelInterface
      */
@@ -76,6 +77,19 @@ class ModelAdapter implements AdapterInterface, ValidatableAdapterInterface
         $this->credential = $credential;
         return $this;
     }
+
+    public function getIdentityObjectByIdentity($identity)
+    {
+        if (!empty($identity)) {
+            $results = $this->model->findByIdentity($identity);
+            $objIdentity = current($results);
+            if($objIdentity instanceof ObjectInterface) {
+                return $objIdentity;
+            }
+        }
+        return null;
+    }
+
 
 
     /**
