@@ -82,7 +82,7 @@ class ModelAdapter implements AdapterInterface, ValidatableAdapterInterface
     {
         if (!empty($identity)) {
             $results = $this->model->findByIdentity($identity);
-            $objIdentity = current($results);
+            $objIdentity = $results->current();
             if($objIdentity instanceof ObjectInterface) {
                 return $objIdentity;
             }
