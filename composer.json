@@ -1,19 +1,34 @@
 {
     "name": "leogr/zf2-auth-module",
-    "description": "ZF2 module for Authentication service",
+    "description": "ZF2 module for authentication services",
     "license": "BSD-2-Clause",
-    "minimum-stability": "dev",
     "authors": [
         {
             "name": "Leonardo Grasso",
             "email": "me@leonardograsso.com"
+        },
+        {
+            "name": "Leonardo Grasso",
+            "email": "leodidonato@gmail.com"
+        },
+        {
+            "name": "Antonio Visalli",
+            "email": "antonino.visalli@gmail.com"
         }
     ],
     "require": {
-        "php": ">=5.4"
+        "php": ">=5.4",
+        "zendframework/zend-authentication": "2.3.*",
+        "zendframework/zend-stdlib": "2.3.*",
+        "zendframework/zend-eventmanager": "2.3.*",
+        "zendframework/zend-servicemanager": "2.3.*",
+        "zendframework/zend-session": "2.3.*",
+        "zendframework/zend-mvc": "2.3.*",
+        "zendframework/zend-loader": "2.3.*",
+        "zendframework/zend-modulemanager": "2.3.*"
     },
     "require-dev": {
-       "phpunit/phpunit": "4.0.*"
+       "phpunit/phpunit": "4.2.*"
     },
     "autoload": {
         "psr-0": {

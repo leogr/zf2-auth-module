@@ -1,14 +1,11 @@
 <?php
+
+namespace AuthModule\Identity;
+
 /**
- * Created by PhpStorm.
- * User: antonio
- * Date: 11/04/14
- * Time: 11.46
+ * Interface IdentityObjectInterface
  */
-
-namespace AuthModule\Indentity;
-
-interface IdentityObjectInterface {
-
+interface IdentityObjectInterface
+{
     public function getIdentityObject();
-} 
+}

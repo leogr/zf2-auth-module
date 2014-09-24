@@ -1,17 +1,18 @@
 <?php
 namespace AuthModule\Service;
 
+use Zend\Authentication\Adapter\AdapterInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\FactoryInterface;
 use AuthModule\AuthenticationService;
 use Zend\Authentication\Storage\Session;
+use Zend\Session\SessionManager;
 
 /**
  * Class InteractiveAuthServiceFactory
  */
 class InteractiveAuthServiceFactory implements FactoryInterface
 {
-
     /**
      * Config Key
      *
@@ -37,21 +38,25 @@ class InteractiveAuthServiceFactory implements FactoryInterface
         $config = $this->getConfig($serviceLocator);
         $authService = new AuthenticationService();
 
-        $sessionStorageConfig = array(
+        $sessionStorageConfig = [
             'namespace' => __NAMESPACE__,
             'member'    => null,
-        );
+        ];
         if (isset($config['session_storage']) && is_array($config['session_storage'])) {
-           $sessionStorageConfig = array_merge($sessionStorageConfig, $config['session_storage']);
+            $sessionStorageConfig = array_merge($sessionStorageConfig, $config['session_storage']);
         }
+
+        /** @var $sessionManager SessionManager */
         $sessionManager = $serviceLocator->get('Zend\Session\SessionManager');
 
-        $authService->setStorage(new Session(
-            $sessionStorageConfig['namespace'], $sessionStorageConfig['member'], $sessionManager
-        ));
+        $authService->setStorage(
+            new Session($sessionStorageConfig['namespace'], $sessionStorageConfig['member'], $sessionManager)
+        );
 
         if (isset($config['adapter']) && is_string($config['adapter']) && $serviceLocator->has($config['adapter'])) {
-            $authService->setAdapter($serviceLocator->get($config['adapter']));
+            /** @var $adapter AdapterInterface */
+            $adapter = $serviceLocator->get($config['adapter']);
+            $authService->setAdapter($adapter);
         }
 
         return $authService;
@@ -70,7 +75,7 @@ class InteractiveAuthServiceFactory implements FactoryInterface
         }
 
         if (!$serviceLocator->has('Config')) {
-            $this->config = array();
+            $this->config = [];
             return $this->config;
         }
 
@@ -78,7 +83,7 @@ class InteractiveAuthServiceFactory implements FactoryInterface
         if (!isset($config[$this->configKey])
             || !is_array($config[$this->configKey])
         ) {
-            $this->config = array();
+            $this->config = [];
             return $this->config;
         }
 

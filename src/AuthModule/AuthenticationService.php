@@ -1,20 +1,22 @@
 <?php
 namespace AuthModule;
 
-use AuthModule\Indentity\IdentityObjectInterface;
-use Zend\Authentication\AuthenticationService as BaseAuthService;
+use AuthModule\Adapter\ModelAdapter;
+use AuthModule\Identity\IdentityObjectInterface;
+use AuthModule\Identity\ObjectInterface;
 use Zend\Authentication\Adapter\AdapterInterface;
+use Zend\Authentication\AuthenticationService as BaseAuthService;
 use Zend\Authentication\Result;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
-use AuthModule\Indentity\ObjectInterface;
 use Zend\EventManager\EventManagerInterface;
 
+/**
+ * Class AuthenticationService
+ */
 class AuthenticationService extends BaseAuthService implements EventManagerAwareInterface, IdentityObjectInterface
 {
-
     use EventManagerAwareTrait;
-
 
     /**
      * @var ObjectInterface
@@ -42,9 +44,12 @@ class AuthenticationService extends BaseAuthService implements EventManagerAware
     protected function attachDefaultListener()
     {
         $events = $this->getEventManager();
-        $events->attach(AuthenticationEvent::EVENT_AUTH, array($this, 'dispatchAuthentication'));
+        $events->attach(AuthenticationEvent::EVENT_AUTH, [$this, 'dispatchAuthentication']);
     }
 
+    /**
+     * @param AuthenticationEvent $e
+     */
     public function dispatchAuthentication(AuthenticationEvent $e)
     {
         $e->setResult(parent::authenticate($e->getAdapter()));
@@ -58,11 +63,11 @@ class AuthenticationService extends BaseAuthService implements EventManagerAware
      */
     public function setEventManager(EventManagerInterface $events)
     {
-        $identifiers = array(__CLASS__, get_class($this));
+        $identifiers = [__CLASS__, get_class($this)];
         if (isset($this->eventIdentifier)) {
             if ((is_string($this->eventIdentifier))
                 || (is_array($this->eventIdentifier))
-                || ($this->eventIdentifier instanceof Traversable)
+                || ($this->eventIdentifier instanceof \Traversable)
             ) {
                 $identifiers = array_unique(array_merge($identifiers, (array) $this->eventIdentifier));
             } elseif (is_object($this->eventIdentifier)) {
@@ -82,11 +87,14 @@ class AuthenticationService extends BaseAuthService implements EventManagerAware
     public function getIdentityObject()
     {
         if ($this->hasIdentity()) {
-            if(!$this->identityObject) {
-                $this->identityObject = $this->getAdapter()->getIdentityObjectByIdentity($this->getIdentity());
+            if (!$this->identityObject) {
+                /** @var $modelAdapter ModelAdapter */
+                $modelAdapter = $this->getAdapter();
+                $this->identityObject = $modelAdapter->getIdentityObjectByIdentity($this->getIdentity());
             }
             return $this->identityObject;
         }
+        return null;
     }
 
     /**
@@ -94,7 +102,6 @@ class AuthenticationService extends BaseAuthService implements EventManagerAware
      *
      * @param  AdapterInterface $adapter
      * @return Result
-     * @throws Exception\RuntimeException
      */
     public function authenticate(AdapterInterface $adapter = null)
     {
@@ -113,5 +120,4 @@ class AuthenticationService extends BaseAuthService implements EventManagerAware
 
         return $event->getResult();
     }
-
 }

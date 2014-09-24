@@ -1,17 +1,19 @@
 <?php
 namespace AuthModule;
 
-use Zend\EventManager\Event;
 use Zend\Authentication\Adapter\AdapterInterface;
 use Zend\Authentication\Result;
+use Zend\EventManager\Event;
 
+/**
+ * Class AuthenticationEvent
+ */
 class AuthenticationEvent extends Event
 {
-
     /**#@+
      * Events triggered by eventmanager
      */
-    const EVENT_AUTH     = 'auth';
+    const EVENT_AUTH = 'auth';
     /**#@-*/
 
     /**
@@ -59,5 +61,4 @@ class AuthenticationEvent extends Event
     {
         return $this->result;
     }
-
 }
