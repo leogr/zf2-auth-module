@@ -1,5 +1,7 @@
-A ZF2 module for authentication services [![Latest Stable Version](https://poser.pugx.org/leogr/zf2-auth-module/v/stable.png)](https://packagist.org/packages/leogr/zf2-auth-module)
+A ZF2 module for authentication services
 ========================================
+
+[![Latest Stable Version](https://poser.pugx.org/leogr/zf2-auth-module/v/stable.png)](https://packagist.org/packages/leogr/zf2-auth-module)
 
 This ZF2 module provides a standard setup for an interactive authentication environment (based on Zend Framework 2 authentication, i.e. `\Zend\Authentication`).
 
