@@ -1,19 +1,21 @@
 <?php
 namespace AuthModule\Controller\Plugin;
 
-use Zend\Mvc\Controller\Plugin\AbstractPlugin;
-use AuthModule\AuthenticationService;
-use Zend\Authentication\Storage\Session;
 use AuthModule\AuthenticationEvent;
-use Zend\Session\SessionManager;
+use AuthModule\AuthenticationService;
+use AuthModule\Exception\RuntimeException;
+use Zend\Authentication\Adapter\AdapterInterface;
 use Zend\Authentication\Adapter\ValidatableAdapterInterface;
 use Zend\Authentication\Result;
-use Zend\Authentication\Adapter\AdapterInterface;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
+use Zend\Authentication\Storage\Session;
+use Zend\Mvc\Controller\Plugin\AbstractPlugin;
+use Zend\Session\SessionManager;
 
-class InteractiveAuth extends AbstractPlugin implements ServiceLocatorAwareInterface
+/**
+ * Class InteractiveAuth
+ */
+class InteractiveAuth extends AbstractPlugin
 {
-
     /**
      * @var AuthenticationService
      */
@@ -32,15 +34,12 @@ class InteractiveAuth extends AbstractPlugin implements ServiceLocatorAwareInter
     /**
      * @param AuthenticationService $authService
      * @param SessionManager $sessionManager
-     * @throws Zend\Mvc\Exception
+     * @throws RuntimeException
      */
     public function __construct(AuthenticationService $authService, SessionManager $sessionManager)
     {
         if (!$authService->getStorage() instanceof Session) {
-            throw new Zend\Mvc\Exception(__CLASS__ . ' requires SessionStorage');
-        }
-        if (!$authService->getAdapter() instanceof ValidatableAdapterInterface) {
-            throw new Zend\Mvc\Exception(__CLASS__ . ' requires ValidatableAdapterInterface');
+            throw new RuntimeException(__CLASS__ . ' requires SessionStorage');
         }
 
         $this->authService = $authService;
@@ -62,20 +61,18 @@ class InteractiveAuth extends AbstractPlugin implements ServiceLocatorAwareInter
         return $this->rememberMe;
     }
 
-
     /**
      *
      */
     protected function attachDefaultListener()
     {
-        $this->authService->getEventManager()->attach(AuthenticationEvent::EVENT_AUTH, array($this, 'authListener'), -1000);
+        $this->authService->getEventManager()->attach(AuthenticationEvent::EVENT_AUTH, [$this, 'authListener'], -1000);
     }
-
 
     /**
      * @param AuthenticationEvent $e
      */
-    protected function authListener(AuthenticationEvent $e)
+    public function authListener(AuthenticationEvent $e)
     {
         $result = $e->getResult();
 
@@ -105,15 +102,19 @@ class InteractiveAuth extends AbstractPlugin implements ServiceLocatorAwareInter
         return $this->sessionManager;
     }
 
-
     /**
      * @param string $identity
      * @param string $credential
+     * @throws RuntimeException
      * @return Result
      */
     public function login($identity, $credential)
     {
         $authAdapter = $this->authService->getAdapter();
+
+        if (!$authAdapter instanceof ValidatableAdapterInterface) {
+            throw new RuntimeException(__CLASS__ . ' requires ValidatableAdapterInterface');
+        }
 
         $authAdapter->setIdentity($identity)
                     ->setCredential($credential);
@@ -127,10 +128,10 @@ class InteractiveAuth extends AbstractPlugin implements ServiceLocatorAwareInter
     public function logout()
     {
         $this->authService->clearIdentity();
-        $this->sessionManager->destroy(array(
+        $this->sessionManager->destroy([
             'send_expire_cookie'    => true,
             'clear_storage'         => true,
-        ));
+        ]);
     }
 
     /**
@@ -141,5 +142,4 @@ class InteractiveAuth extends AbstractPlugin implements ServiceLocatorAwareInter
     {
         return $this->authService->authenticate($adapter);
     }
-
 }
