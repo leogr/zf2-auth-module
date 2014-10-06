@@ -9,9 +9,9 @@ use Zend\Authentication\Storage\Session;
 use Zend\Session\SessionManager;
 
 /**
- * Class InteractiveAuthServiceFactory
+ * Class AuthenticationServiceFactory
  */
-class InteractiveAuthServiceFactory implements FactoryInterface
+class AuthenticationServiceFactory implements FactoryInterface
 {
     /**
      * Config Key
