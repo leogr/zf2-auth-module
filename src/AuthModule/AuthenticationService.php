@@ -2,6 +2,7 @@
 namespace AuthModule;
 
 use AuthModule\Adapter\ModelAdapter;
+use AuthModule\Exception\RuntimeException;
 use AuthModule\Identity\IdentityObjectInterface;
 use AuthModule\Identity\ObjectInterface;
 use Zend\Authentication\Adapter\AdapterInterface;
@@ -83,6 +84,7 @@ class AuthenticationService extends BaseAuthService implements EventManagerAware
 
     /**
      * @return ObjectInterface|null
+     * @throws Exception\RuntimeException
      */
     public function getIdentityObject()
     {
@@ -90,7 +92,11 @@ class AuthenticationService extends BaseAuthService implements EventManagerAware
             if (!$this->identityObject) {
                 /** @var $modelAdapter ModelAdapter */
                 $modelAdapter = $this->getAdapter();
-                $this->identityObject = $modelAdapter->getIdentityObjectByIdentity($this->getIdentity());
+                if ($modelAdapter) {
+                    $this->identityObject = $modelAdapter->getIdentityObjectByIdentity($this->getIdentity());
+                } else {
+                    throw new RuntimeException('Not set adapter in authentication service');
+                }
             }
             return $this->identityObject;
         }
