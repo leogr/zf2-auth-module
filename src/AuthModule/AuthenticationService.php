@@ -103,6 +103,16 @@ class AuthenticationService extends BaseAuthService implements EventManagerAware
     }
 
     /**
+     * @return ObjectInterface|null
+     * @throws Exception\RuntimeException
+     */
+    public function reloadIdentityObject()
+    {
+        $this->identityObject = null;
+        return $this->getIdentityObject();
+    }
+
+    /**
      * Authenticates against the supplied adapter
      *
      * @param  AdapterInterface $adapter
