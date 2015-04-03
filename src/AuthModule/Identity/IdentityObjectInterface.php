@@ -7,5 +7,16 @@ namespace AuthModule\Identity;
  */
 interface IdentityObjectInterface
 {
+
+    /**
+     * @return ObjectInterface|null
+     * @throws Exception\RuntimeException
+     */
     public function getIdentityObject();
+
+    /**
+     * @return ObjectInterface|null
+     * @throws Exception\RuntimeException
+     */
+    public function reloadIdentityObject();
 }
